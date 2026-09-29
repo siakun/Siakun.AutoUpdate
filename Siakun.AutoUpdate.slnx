@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Siakun.AutoUpdate/Siakun.AutoUpdate.csproj" />
+  <Project Path="Siakun.AutoUpdate.Tests/Siakun.AutoUpdate.Tests.csproj" />
+</Solution>
