@@ -52,6 +52,16 @@ jobs:
       with:
         user: siakun   # nuget.org 사용자 이름. 비밀 값이 아니다
 
+    # 패키지를 와일드카드가 아니라 파일마다 전체 경로로 넘긴다. Windows의 dotnet nuget push는
+    # 'artifacts/*.nupkg'처럼 '/'로 쓴 와일드카드를 풀지 못하고 파일이 없다며 실패한다.
     # 같은 버전이 이미 게시돼 있으면 건너뛰어, 게시 뒤 실행을 다시 돌려도 실패로 끝나지 않는다
     - name: Push to nuget.org
-      run: dotnet nuget push "artifacts/*.nupkg" --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+      shell: pwsh
+      run: |
+        $packages = @(Get-ChildItem -Path artifacts -Filter *.nupkg)
+        if ($packages.Count -eq 0) { throw 'artifacts에 게시할 패키지가 없습니다.' }
+        foreach ($package in $packages) {
+          dotnet nuget push $package.FullName --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" `
+            --source https://api.nuget.org/v3/index.json --skip-duplicate
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        }
