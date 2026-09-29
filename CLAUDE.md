@@ -1,4 +1,4 @@
-- 이 파일이 담당하는 것: 이 저장소의 브랜치 전략, 프로젝트 이름 규칙, 솔루션과 프로젝트 배치, 설계 기록을 읽고 갱신하는 규칙입니다.
+- 이 파일이 담당하는 것: 이 저장소의 브랜치 전략, 프로젝트 이름 규칙, 솔루션과 프로젝트 배치, 설계 기록을 읽고 갱신하는 규칙, nuget.org 배포 절차입니다.
 - 위치만 참조하는 것: 라이브러리 사용법은 `README.md`에, 라이브러리 설계와 확인한 Velopack 동작은 `PROJECT.md`에 있습니다.
 - 담지 않는 것: 커밋 메시지 컨벤션, 작성자 표기, 푸시 정책처럼 모든 저장소에 공통인 규칙의 본문입니다.
 
@@ -22,3 +22,9 @@
 라이브러리나 Velopack 연동을 조사하거나 고치기 전에 `PROJECT.md`를 먼저 읽습니다. 거기 적힌 Velopack 동작은 소스로 확인한 사실이므로 다시 조사하지 않습니다. `Siakun.AutoUpdate/Siakun.AutoUpdate.csproj`의 Velopack 버전이 `PROJECT.md`에 적힌 버전과 다를 때만 그 문서의 "다시 확인하는 방법"대로 다시 확인합니다.
 
 조사하거나 결정해서 새로 알게 된 것은 같은 작업에서 `PROJECT.md`에 반영합니다. 열린 결정을 정했으면 "열린 결정과 한계" 절에서 그 항목을 결정 내용으로 바꿉니다.
+
+## 4. 배포
+
+nuget.org 게시는 `v<버전>` 태그를 push하면 `.github/workflows/publish.yml`이 합니다. 워크플로는 태그와 `Siakun.AutoUpdate/Siakun.AutoUpdate.csproj`의 `Version`이 같은지 확인하고, 테스트와 패키징을 거쳐 nuget.org의 Trusted Publishing으로 게시합니다. PC에서 API 키로 `dotnet nuget push`하지 않습니다.
+
+버전을 올릴 때는 csproj의 `Version`을 바꿔 커밋한 뒤 같은 버전의 태그를 그 커밋에 붙입니다. nuget.org는 게시한 버전을 지울 수 없고 목록에서 숨기기만 할 수 있으므로, 태그는 테스트를 통과한 커밋에만 붙입니다.
